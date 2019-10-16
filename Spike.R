@@ -1,22 +1,22 @@
 
 #Lectura de los datos
 data<-read.csv("caudal_extra.csv")
-#Transformación a formato fecha
+#TransformaciÃ³n a formato fecha
 data$fecha<-as.Date(data$fecha)
 
 ################ Pregunta 2 ############################
-# De los datos, a través de un summary(data), se puede destacar lo siguiente:
+# De los datos, a travÃ©s de un summary(data), se puede destacar lo siguiente:
 # - La variable "caudal" posee un amplio rango de valores que van desde 0 hasta 15805.00 los cuales
-#no están distribuidos uniformemente en ese intervalo, sino más bien, el 50%
-#de los datos son menores un valor aprox de 8, y el 75% es menor a un valor 70 aprox. De esta forma se observa 
-#que son pocas los individuos con valores más grandes a los anteriores. 
+#no estÃ¡n distribuidos uniformemente en ese intervalo, sino mÃ¡s bien, el 50%
+#de los datos son menores de un 8 aprox, y el 75% es menor a un valor 70 aprox. De esta forma se observa 
+#que son pocas los individuos con valores mÃ¡s grandes a los anteriores. 
 # - Similar al caso anterior, se encuentra la variable "precip_promedio" esta
-está entre 0 y 258.6, siendo el 75% de los valores iguales a 0.
+#estÃ¡ entre 0 y 258.6, siendo el 75% de los valores iguales a 0.
 # - La variable temp_max_promedio, a diferencia de las anteriores, posee observaciones
-con valores no tan disimiles entre si, sin embargo es la variable con mayor cantidad
-de observaciones nulas. 
-#- Se destaca finalmente que, debido a como fue construida la base de datos, la única variable con mediciones 
-#relevantes que no posee NA es caudal, y que tanto las variables de precipitación y temperatura poseen NA debido
+#con valores no tan disimiles entre si, sin embargo es la variable con mayor cantidad
+#de observaciones nulas. 
+#- Se destaca finalmente que, debido a como fue construida la base de datos, la Ãºnica variable con mediciones 
+#relevantes que no posee NA es caudal, y que tanto las variables de precipitaciÃ³n y temperatura poseen NA debido
 # a la ausencia de dichas mediciones en el poligono considerado.  
 
 
@@ -30,16 +30,16 @@ time_plot_una_estacion<-function(codigo_estacion,columna,fecha_min,fecha_max){
 	plot(subdata[,2],subdata[,1],xlab="Tiempo",ylab=columna,type='b')
 }
 
-# time_plot_una_estacion es una función que recibe los parámetros de entrada solicitados en el inciso de la
-#pregunta 3. Un ejemplo de su uso se ejecuta a continuación
+# time_plot_una_estacion es una funciÃ³n que recibe los parÃ¡metros de entrada solicitados en el inciso de la
+#pregunta 3. Un ejemplo de su uso se ejecuta a continuaciÃ³n
 
 time_plot_una_estacion(1020003,"caudal","2000-01-02","2000-03-09")
 
 #### b)
 
-#Con el fin de normalizar una variable se crea la función normalizacion, la cual, la lleva al intervalo [0,1]
+#Con el fin de normalizar una variable se crea la funciÃ³n normalizacion, la cual, la lleva al intervalo [0,1]
 
-#Parámetros de entrada:
+#ParÃ¡metros de entrada:
 #variable: vector numerico de la variable a normalizar
 normalizacion<-function(variable){
 	minimo<-min(na.omit(variable))
@@ -48,7 +48,7 @@ normalizacion<-function(variable){
 	return(Xchanged)
 }
 
-#Se crea la función pedida, con los parámetros pedidos.
+#Se crea la funciÃ³n pedida, con los parÃ¡metros pedidos.
 time_plot_estaciones_varias_columnas<-function(codigo_estacion,columnas, fecha_min, fecha_max){
 	subdata<-subset(data,codigo_estacion==codigo_estacion & fecha>=fecha_min & fecha<=fecha_max,select=c(columnas,"fecha"))
 	subdata<-subdata[order(subdata[,4]),]
@@ -59,31 +59,31 @@ time_plot_estaciones_varias_columnas<-function(codigo_estacion,columnas, fecha_m
 	plot(subdata[,4],norm_caudal,xlab="Fecha",ylab="Rango",col="blue",type="o",ylim=c(0,1.4))
 	points(subdata[,4],norm_pp,xlab="Fecha",ylab="Rango",col="green",type="o")
 	points(subdata[,4],norm_temp,xlab="Fecha",ylab="Rango",col="orange",type="o")
-	legend(x="topright",c("Caudal", "Precipitación", "Temperatura"), fill = c("blue", "green", "orange"),title="Variables")
+	legend(x="topright",c("Caudal", "PrecipitaciÃ³n", "Temperatura"), fill = c("blue", "green", "orange"),title="Variables")
 }
 
-#Un ejemplo de como se utiliza la función anterior se detalla a continuación:
+#Un ejemplo de como se utiliza la funciÃ³n anterior se detalla a continuaciÃ³n:
 time_plot_estaciones_varias_columnas(1020003,c("temp_max_promedio","precip_promedio","caudal"),"2000-01-02", "2000-03-09")
 
 
 
 ################ Pregunta 4 ############################
-#Antes de crear las variables pedida se crea la función estaciones.Su objetivo principal es determinar a que 
-#estación del año pertenece cada fila de la vriable fecha, todo esto para después cálcular el percentil 95 
-#de las variables T°,PP y caudal en cada estacion del año.
+#Antes de crear las variables pedida se crea la funciÃ³n estaciones.Su objetivo principal es determinar a que 
+#estaciÃ³n del aÃ±o pertenece cada fila de la vriable fecha, todo esto para despuÃ©s cÃ¡lcular el percentil 95 
+#de las variables TÂ°,PP y caudal en cada estacion del aÃ±o.
 
 #Parametros de entrada:
 #fecha: vector de fechas /formato "2019-10-15"
 
 estaciones<-function(fecha){
 	
-	#Se determina el año min y max que existe en la BD
+	#Se determina el aÃ±o min y max que existe en la BD
 	minimo<-strsplit(as.character(min(fecha)),split="-")[[1]][1]
 	maximo<-strsplit(as.character(max(fecha)),split="-")[[1]][1]
-	#Se crea un vector con el rango de los años
+	#Se crea un vector con el rango de los aÃ±os
 	years<-seq(minimo,maximo)
 
-	#Se inicializan los vectores que determinaran el inicio de cada estación por cada año existente
+	#Se inicializan los vectores que determinaran el inicio de cada estaciÃ³n por cada aÃ±o existente
 	inicio_primavera<-c()
 	inicio_verano<-c()
 	inicio_otono<-c()
@@ -103,7 +103,7 @@ estaciones<-function(fecha){
 	inicio_otono<-as.Date(inicio_otono)
 	inicio_invierno<-as.Date(inicio_invierno)
 	
-	#Se iniciliza un vector que contendrá la estación a la que pertenece cada fecha de la BD
+	#Se iniciliza un vector que contendrÃ¡ la estaciÃ³n a la que pertenece cada fecha de la BD
 	estacion<-rep(0,length(fecha))
 	n<-length(years)-1
 	
@@ -124,10 +124,10 @@ estaciones<-function(fecha){
 #Un ejemplo del uso de la funcion estaciones
 estaciones(data$fecha)
 
-#También se creó la función perc_estancion que retorna el percentil 95 de una variable en cada estación del año.
-#Parámetros de entrada:
-#estacion : vector con las estaciones a la cual pertenece una fecha. Un ejemplo sería el vector c("primavera","verano") si las fechas son 24-09-1995 y 02-01-2019)
-#var      : variable de interés
+#TambiÃ©n se creÃ³ la funciÃ³n perc_estancion que retorna el percentil 95 de una variable en cada estaciÃ³n del aÃ±o.
+#ParÃ¡metros de entrada:
+#estacion : vector con las estaciones a la cual pertenece una fecha. Un ejemplo serÃ­a el vector c("primavera","verano") si las fechas son 24-09-1995 y 02-01-2019)
+#var      : variable de interÃ©s
 perc_estancion<-function(estacion,var){
 	
 	quant_otono<-quantile(var[estacion=="otono"], prob = 0.95,na.rm=TRUE)	
@@ -139,22 +139,23 @@ perc_estancion<-function(estacion,var){
 	return(salida)
 	}
 
-#Finalmente se crea la función "indicadora_extremo", la cual, devuelve un vector con  valores 1 y 0. Es 1 si la variable de interés (ya sea,
-#caudal, T° o pp) registra un valor más alto que el percentil 95 en la estación del año correspondiente.
+#Finalmente se crea la funciÃ³n "indicadora_extremo", la cual, devuelve un vector con  valores 1 y 0.
+#Es 1 si la variable de interÃ©s (ya sea, caudal, TÂ° o pp) registra un valor mÃ¡s alto que el percentil 95 en la estaciÃ³n del 
+#aÃ±o correspondiente.
 
-#Párametros de entrada:
+#PÃ¡rametros de entrada:
 
-#variable: 	Vector con la variable de interés, ejemplo: caudal
+#variable: 	Vector con la variable de interÃ©s, ejemplo: caudal
 #fecha: 	Vector con las fechas en las cuales se realizaron las mediciones de la variable
 
 indicadora_extremo<-function(variable,fecha){
-	#Creamos el vector que se llenará con los 1 o 0
+	#Creamos el vector que se llenarÃ¡ con los 1 o 0
 	indicadora<-rep(0,1411180)
 
-	#Llamamos a la función estaciones
+	#Llamamos a la funciÃ³n estaciones
 	estacion<-estaciones(fecha)
 
-	#Llamamos a la función perc_estacion
+	#Llamamos a la funciÃ³n perc_estacion
 	percentiles_estaciones<-perc_estancion(estacion,variable)
 
 
@@ -166,24 +167,25 @@ return(indicadora)
 }
 
 ################### respuesta 
-#Así finalmente, para generar las variables pedidas solo basta llamar a la función indicadora_extremo
+#AsÃ­ finalmente, para generar las variables pedidas solo basta llamar a la funciÃ³n indicadora_extremo
 caudal_extremo<-indicadora_extremo(data$caudal,data$fecha)
 temp_extremo<-indicadora_extremo(data$temp_max_promedio,data$fecha)
 precip_extremo<-indicadora_extremo(data$precip_promedio,data$fecha)
 
-#¿Les parece razonable esta medida para capturar algo “extremo”? ¿Usarían otra? ¿Cuál? ( Solamente
-#descríbanla, no la codifiquen! Vamos a usar la definición de Spike para esta desafío)
+#Â¿Les parece razonable esta medida para capturar algo â€œextremoâ€? Â¿UsarÃ­an otra? Â¿CuÃ¡l? ( Solamente
+#descrÃ­banla, no la codifiquen! Vamos a usar la definiciÃ³n de Spike para esta desafÃ­o)
 
-#La medida considerada es razonable ya que claramente las observaciones que alcancen valores "extremos" se alejan bastante del resto; La
-#otra medida que consideraría sería tal vez considerar además la localización de las estaciones, ya que si las mediciones están hechas a nivel 
-#país el clima varía mucho entre el norte o sur. Un valor de 23°C en primavera no es extremo en Santiago, mientras que en Chiloé tal vez si.
+#La medida considerada es razonable ya que claramente las observaciones que alcancen valores "extremos" se alejan bastante del resto; 
+#La otra medida que considerarÃ­a serÃ­a tal vez considerar ademÃ¡s la localizaciÃ³n de las estaciones, ya que si las mediciones estÃ¡n 
+#hechas a nivel paÃ­s el clima varÃ­a mucho entre el norte o sur. Un valor de 23Â°C en primavera no es extremo en Santiago,
+#mientras que en ChiloÃ© tal vez si.
 
 ################ Pregunta 5 ############################
 
-# Análizando la variable caudal_extremo
+# AnÃ¡lizando la variable caudal_extremo
 
-# Se crea un vector llamado medidas el cual contiene el porcentaje de eventos extremos en una determinada estación, en los 
-#años de 1960 a 2018
+# Se crea un vector llamado medidas el cual contiene el porcentaje de eventos extremos en una determinada estaciÃ³n, en los 
+#aÃ±os de 1960 a 2018
 
 extremo<-as.data.frame(caudal_extremo)
 extremo$Nombre<-data$nombre
@@ -201,16 +203,17 @@ medidas<-c(medidas,(sum(as.matrix(obs))/dim(registro_total)[1])*100)
 plot(medidas,nombres,col=nombres,main="Porcentaje de extremos alcanzados por las distintas estaciones en el rango 1960-2018")
 
 
-## Como se puede apreciar del gráfico y del vector llamado medidas, en general existen varias estaciones que
-#no alcanzan valores extremos en la variable caudal, a lo largo de los años 1960 y 2018, estas son un 52% aproximadamente del total de estaciones
-,sin embargo, del 48% de restante, el porcentaje de registros de valores extremos de alcanzados en cada estación,en general varía bastante, estos van 
-# desde un 0.34% hasta un 80% aproximadamente. 
-En particular se destaca "Rio Baker Bajo Ã‘Adis" que posee un 84.31% aprox de valores extremos, en el total de mediciones realizadas en esta estación. 
+## Como se puede apreciar del grÃ¡fico y del vector llamado medidas, en general existen varias estaciones que
+#no alcanzan valores extremos en la variable caudal, a lo largo de los aÃ±os 1960 y 2018, estas son un 52% aproximadamente del
+#total de estaciones ,sin embargo, del 48% de restante, el porcentaje de registros de valores extremos de alcanzados en cada estaciÃ³n,
+#en general varÃ­a bastante, estos van desde un 0.34% hasta un 80% aproximadamente. 
+#En particular se destaca "Rio Baker Bajo Ãƒâ€˜Adis" que posee un 84.31% aprox de valores extremos, 
+#en el total de mediciones realizadas en esta estaciÃ³n. 
 
 
 ################ Pregunta 6 ############################
 
-# Para realizar y contestar lo pedido se crea la función plot_extremos
+# Para realizar y contestar lo pedido se crea la funciÃ³n plot_extremos
 
 plot_extremos<-function(variable,fecha){
 	fechas_unicas<-unique(fecha)
@@ -220,10 +223,10 @@ plot_extremos<-function(variable,fecha){
 	Y_max<-c()
 	for(i in 1:length(fechas_unicas)){
 
-		#Datos asociados a la fecha i-ésima
+		#Datos asociados a la fecha i-Ã©sima
 		X<-subset(datos,fechas==fechas_unicas[i],select=c(variable))
 
-		#Vector que contiene la cantidad de registros asociados a cada fecha única
+		#Vector que contiene la cantidad de registros asociados a cada fecha Ãºnica
 		X_cant<-c(X_cant,dim(X)[1])
 
 		#Vector que contiene la cantidad de  registros maximos asociados a cada fecha
@@ -240,24 +243,24 @@ plot_extremos<-function(variable,fecha){
 	plot(dt_plot[,2],dt_plot[,1],xlab="Fechas",ylab="Porcentaje de extremos",type='p')
 }
 
-# Gráficos asociados al porcentaje de eventos extremos en cada fecha distinta registrada.
-#OBS: Se realizan los gráficos a las primeras 5000 observaciones debido al tiempo de ejecución 
-#de la función; esto último debido al ciclo for en la función de 21252 iteraciones 
+# GrÃ¡ficos asociados al porcentaje de eventos extremos en cada fecha distinta registrada.
+#OBS: Se realizan los grÃ¡ficos a las primeras 5000 observaciones debido al tiempo de ejecuciÃ³n 
+#de la funciÃ³n; esto Ãºltimo debido al ciclo for en la funciÃ³n de 21252 iteraciones 
 
 plot_extremos(caudal_extremo[1:5000],data$fecha[1:5000])
 plot_extremos(temp_extremo[1:5000],data$fecha[1:5000])
 plot_extremos(precip_extremo[1:5000],data$fecha[1:5000])
 
-# A partir de los gráficos creados se puede observar que el comportamiento extremo, a medida que los años pasan efectivamente se 
-#van haciendo más comunes.
+# A partir de los grÃ¡ficos creados se puede observar que el comportamiento extremo, a medida que los aÃ±os pasan efectivamente se 
+#van haciendo mÃ¡s comunes.
 
 ################ Pregunta 7 ############################
 
-# Modelo predicción caudal extremo
-#El modelo a utilizar es una regresión logistica con dos variables predictoras: Caudal y precipitación 
-#Se descartó el uso de la variable temperatura dado que 
+# Modelo predicciÃ³n caudal extremo
+#El modelo a utilizar es una regresiÃ³n logistica con dos variables predictoras: Caudal y precipitaciÃ³n 
+#Se descartÃ³ el uso de la variable temperatura dado que 
 
-#Se genera un dataset con las variables de interés
+#Se genera un dataset con las variables de interÃ©s
 
 datos_modelo<-as.data.frame(cbind(caudal_extremo,normalizacion(data$caudal),normalizacion(data$precip_promedio)))
 names(datos_modelo)<-c("caudal_extremo","caudal","pp")
@@ -275,8 +278,8 @@ test<-datos_modelo[-index,]
 modelo<-glm(caudal_extremo~caudal+pp,data=train) 
 
 #Uso del modelo planteado
-#El modelo generado, dado que se utilizaron todos los datos disponibles, se basa básicamente en predecir que
-#tan probable es que el evento sea extremo si los valores alcanzados por caudal y precipitación alcanzan ciertas magnitudes.
+#El modelo generado, dado que se utilizaron todos los datos disponibles, se basa bÃ¡sicamente en predecir que
+#tan probable es que el evento sea extremo si los valores alcanzados por caudal y precipitaciÃ³n alcanzan ciertas magnitudes.
 
 ################ Pregunta 8 ############################
 
@@ -307,9 +310,12 @@ npv <- tn / predicted_negative
 data.frame(accuracy,error_rate,sensitivity,especificity,precision,npv)
 
 # a) El modelo planteado tiene un accuracy de 98% aproximadamente, es decir, clasifica correctamente un 98% de los datos.
-#Además posee una sensibilidad de un 74% aprox. es decir que, cuando la clase es positiva, logra clasificar 74% aprox de esta.
-#Así, en mi opinión, los resultados son bastante buenos, pues los valores mencionados nos indican que en general el 
-#modelo logra con su próposito.
+#AdemÃ¡s posee una sensibilidad de un 74% aprox. es decir que, cuando la clase es positiva, logra clasificar 74% aprox de esta.
+#AsÃ­, en mi opiniÃ³n, los resultados son bastante buenos, pues los valores mencionados nos indican que en general el 
+#modelo logra con su prÃ³posito.
+
+#b) Si se quisiera capturar alrededor del 70% de los eventos extremos el modelo planteado serÃ­a Ãºtil, pues, dados los valores de
+#caudal y precipitaciÃ³n, este es capaz de decir si dichos valores corresponden a un evento extremo como una precisiÃ³n aprox del 96%
 
 
 
